@@ -2,7 +2,7 @@
 
 Movie lookup tool, made with TMDB API.
 
-## Tech Stack Choices
+## Design considerations
 
 - React: preferred
 - Vite: fast local development, easy to use, lightweight
@@ -11,10 +11,8 @@ Movie lookup tool, made with TMDB API.
 . Was recently introduced to this (Gherkins/Cucumber) and wanted to continue using it with a more 'current' testing platform
 - btw I use Neovim
 
-## Design Choices
-
+- Authorization: would have preferred to authorize via header options in request but something odd was happening with my read access token; it kept changing after every few requests! Decided to move on after looking for answers with no success. Authorization is via `api_key` in URI per request.
 - No Autocomplete: part of original draft but ultimately decided to keep it simple. In the context of a movie db, I'm assuming the user knows exactly what they are searching for, rather than suggestion of what they should watch next, a la Netflix
-- Auto Search: Because why not
 
 
 # React + Vite
