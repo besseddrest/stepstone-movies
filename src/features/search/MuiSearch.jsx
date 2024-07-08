@@ -1,57 +1,60 @@
-import { Autocomplete, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import SearchResults from "./SearchResults";
-import { useState, useEffect } from "react";
+import Pagination from "@mui/material/Pagination";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { headers } from "/src/utils/headers";
+import { TMDB_BASE_PATH } from "../../utils/constants";
+import { debounce } from "../../utils/debounce";
 
 export default function MuiSearch() {
-    //   const [topMovies, setTopMovies] = useState([]);
     const [movies, setMovies] = useState([]);
-    const options = [
-        { title: 'Movie Title 1', year: 2009 },
-        { title: 'Movie Title 2', year: 2000 },
-        { title: 'Movie Title 3', year: 2009 },
-        { title: 'Movie Title 4', year: 1975 },
-    ]
+    const currentPage = useRef(1);
+
+    console.log(movies);
+    const debounceFetchMovies = useCallback(
+        debounce(val => fetchMovies(val), 500), []
+    )
 
     useEffect(() => {
-        console.log("MOVIES");
-        console.log(movies);
+        // TODO: load popular movies to autocomplete on initial mount
+        // console.log(JSON.stringify(movies, undefined, 4));
     }, [])
 
     return (
         <Stack spacing={2}>
-            <Autocomplete
+            <TextField
                 id="movie-search"
-                freeSolo
-                options={options.map(item => item.title)}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label="Search Input"
-                        InputProps={{
-                            ...params.InputProps,
-                            type: 'search'
-                        }}
-                    />
-                )}
-                onChange={fetchMovies}
+                type="search"
+                label="Search The Movie DB!"
+                onChange={handleChange}
             />
-            <SearchResults />
+            <SearchResults list={movies} />
+            <Pagination
+                page={currentPage.current}
+            />
         </Stack>
     );
 
-    function fetchMovies() {
-        const getData = async () => {
-            await fetch('https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1', headers)
-                .then(response => response.json())
-                .then(response => {
-                    if (response.results.length > 0) {
-                        setMovies(response.results)
-                    }
-                })
-                .catch(err => console.error("Failed to fetch movies: ", err));
+    function handleChange(ev) {
+        debounceFetchMovies(ev.target.value);
+    }
+
+    function fetchMovies(value) {
+        // console.log("VAL: ", value);
+        // TODO: if (!value) then clear the results...?
+        if (value.length > 2) {
+            const getData = async () => {
+                await fetch(`${TMDB_BASE_PATH}/search/movie?query=${value}&page=1`, headers)
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.results.length > 0) {
+                            setMovies(response.results)
+                        }
+                    })
+                    .catch(err => console.error("Failed to fetch movies: ", err));
+            }
+            getData();
         }
-        getData();
     }
 }
