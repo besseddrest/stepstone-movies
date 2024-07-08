@@ -1,7 +1,7 @@
 import './App.css'
 import MuiSearch from './features/search/MuiSearch'
 
-function App() {
+export default function App() {
 
     return (
         <>
@@ -11,4 +11,3 @@ function App() {
     )
 }
 
-export default App

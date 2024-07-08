@@ -4,7 +4,7 @@ import SearchResults from "./SearchResults";
 import Pagination from "@mui/material/Pagination";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { headers } from "/src/utils/headers";
-import { TMDB_BASE_PATH } from "../../utils/constants";
+import { CONSTANTS } from "../../utils/constants";
 import { debounce } from "../../utils/debounce";
 
 export default function MuiSearch() {
@@ -43,9 +43,14 @@ export default function MuiSearch() {
     function fetchMovies(value) {
         // console.log("VAL: ", value);
         // TODO: if (!value) then clear the results...?
+        if (value.length <= 2) {
+            setMovies([]);
+            return;
+        }
+
         if (value.length > 2) {
             const getData = async () => {
-                await fetch(`${TMDB_BASE_PATH}/search/movie?query=${value}&page=1`, headers)
+                await fetch(`${CONSTANTS.TMDB_BASE_PATH}/discover/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&query=${value}&page=1`)
                     .then(response => response.json())
                     .then(response => {
                         if (response.results.length > 0) {
