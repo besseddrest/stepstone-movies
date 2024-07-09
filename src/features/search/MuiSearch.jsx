@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from "react";
-import { Stack, TextField, Pagination } from "@mui/material";
+import { useState, useCallback } from "react";
+import { Stack, TextField } from "@mui/material";
 import MyMovies from "./MyMovies";
 import SearchResults from "./SearchResults";
 import SearchStats from "./SearchStats";
@@ -10,7 +10,6 @@ export default function MuiSearch() {
     const [movies, setMovies] = useState([]);
     const [myMovieList, setMyMovieList] = useState([]);
     const [searchStats, setSearchStats] = useState({ currentPage: 1, totalResults: 0, totalPages: 0 });
-    const currentPage = useRef(1);
 
     const debounceFetchMovies = useCallback(
         debounce(val => fetchMovies(val), 500), []
@@ -38,9 +37,6 @@ export default function MuiSearch() {
             />
             <MyMovies list={myMovieList} />
             <SearchResults list={movies} cb={updateMyMovies} />
-            <Pagination
-                page={currentPage.current}
-            />
             <SearchStats stats={searchStats} />
         </Stack>
     );
@@ -94,8 +90,12 @@ export default function MuiSearch() {
     /**
      * Callback for managing list of movies owned
      */
-    function updateMyMovies(item) {
-        console.log(MyMovies)
-        setMyMovieList([...myMovieList, item]);
+    function updateMyMovies(item, isOwned) {
+        if (!isOwned) {
+            const tempList = [...myMovieList].filter(owned => owned.id !== item.id);
+            setMyMovieList(tempList);
+        } else {
+            setMyMovieList([...myMovieList, item]);
+        }
     }
 }
