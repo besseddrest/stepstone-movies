@@ -3,26 +3,32 @@ import { Button, Card, CardContent, CardMedia, Typography, Grid } from "@mui/mat
 import { CONSTANTS } from "../../utils/constants";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DetailsModal from "./DetailsModal";
 
 export default function SearchResults({ list = [], cb }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [modalItem, setModalItem] = useState(null);
 
     return (
         <section>
-            <div className="search-result__container">
-                <Grid container spacing={2} className="search-result__item">
-                    {list.length > 0 && list.map(item =>
-                        <SearchResultItem key={`item-${item.id}`} item={item} cb={cb} />
-                    )}
-                </Grid>
-            </div>
+            <DetailsModal isOpen={isOpen} modalItem={modalItem} />
+
+            <Grid container spacing={2} className="search-result__item">
+                {list.length > 0 && list.map(item =>
+                    <SearchResultItem key={`item-${item.id}`} item={item} cb={cb} modalCallback={showModal} />
+                )}
+            </Grid>
         </section>
     )
 
+    function showModal(item, bool) {
 
-
+        setIsOpen(bool);
+        setModalItem(item)
+    }
 }
 
-function SearchResultItem({ item, cb }) {
+function SearchResultItem({ item, cb, modalCallback }) {
     const [isOwned, setIsOwned] = useState(false);
     const trimmed = item.overview.length > 80
         ? item.overview.substring(0, 80) + '...'
@@ -53,13 +59,16 @@ function SearchResultItem({ item, cb }) {
     )
 
     function toggleOwnership(item) {
+        setIsOwned(!isOwned);
         if (cb) {
             cb(item);
         }
     }
 
     function showMovieDetails(item) {
-        setIsOwned(!isOwned);
+        if (modalCallback) {
+            modalCallback(item, true)
+        }
         console.log("Show Details for: ", item.id);
     }
 }
