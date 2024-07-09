@@ -5,13 +5,12 @@ import Pagination from "@mui/material/Pagination";
 import { useState, useRef, useCallback } from "react";
 import { CONSTANTS } from "../../utils/constants";
 import { debounce } from "../../utils/debounce";
-import { headers } from "../../utils/headers";
+import MyMovies from "./MyMovies";
 
 export default function MuiSearch() {
     const [movies, setMovies] = useState([]);
-    const [currSearchValue, setCurrSearchValue] = useState(null);
-    const [paginationData, setPaginationData] = useState({ page: null, total_pages: null, total_results: null });
-    const paginationRef = useRef(null);
+    const [myMovieList, setMyMovieList] = useState([]);
+    const [searchStats, setSearchStats] = useState(null);
     const currentPage = useRef(1);
 
     // console.log(movies);
@@ -27,10 +26,12 @@ export default function MuiSearch() {
                 label="Search The Movie DB!"
                 onChange={handleChange}
             />
-            <SearchResults list={movies} />
+            <MyMovies list={myMovieList} />
+            <SearchResults list={movies} cb={updateMyMovies} />
             <Pagination
                 page={currentPage.current}
             />
+            <SearchStats data={searchStats} />
         </Stack>
     );
 
@@ -41,7 +42,6 @@ export default function MuiSearch() {
     function fetchMovies(value) {
         if (value.length <= 2) {
             setMovies([]);
-            setPaginationData(null);
             return;
         }
 
@@ -52,7 +52,12 @@ export default function MuiSearch() {
                     .then(response => {
                         if (response.results.length > 0) {
                             const cleanList = groomResults([...response.results]);
-                            setMovies(response.results)
+                            setSearchStats({
+                                currentPage: response.page,
+                                totalPages: response.total_pages,
+                                totalResults: response.total_results,
+                            });
+                            setMovies(cleanList)
                         }
                     })
                     .catch(err => console.error("Failed to fetch movies: ", err));
@@ -65,7 +70,7 @@ export default function MuiSearch() {
      * Returns a list of movies that have values for the fields we want to display
      */
     function groomResults(movies) {
-        return movies.filter((item, i) => {
+        return movies.filter((item) => {
             if (item.original_title &&
                 item.poster_path &&
                 item.release_date &&
@@ -74,5 +79,13 @@ export default function MuiSearch() {
                 return item;
             }
         });
+    }
+
+    /**
+     * Callback for managing list of movies owned
+     */
+    function updateMyMovies(item) {
+        console.log(MyMovies)
+        setMyMovieList([...myMovieList, item]);
     }
 }
