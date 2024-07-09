@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Card, CardContent, CardMedia, Typography, Grid } from "@mui/material";
+import { Button, Card, CardContent, CardMedia, Typography, Grid, ButtonGroup } from "@mui/material";
 import { CONSTANTS } from "../../utils/constants";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -11,9 +11,9 @@ export default function SearchResults({ list = [], cb }) {
 
     return (
         <section>
-            <DetailsModal isOpen={isOpen} modalItem={modalItem} />
+            <DetailsModal isOpen={isOpen} modalItem={modalItem} modalCallback={showModal} />
 
-            <Grid container spacing={2} className="search-result__item">
+            <Grid container sx={{ flex: 'auto', minWidth: 'maxcontent' }} spacing={2}>
                 {list.length > 0 && list.map(item =>
                     <SearchResultItem key={`item-${item.id}`} item={item} cb={cb} modalCallback={showModal} />
                 )}
@@ -22,7 +22,6 @@ export default function SearchResults({ list = [], cb }) {
     )
 
     function showModal(item, bool) {
-
         setIsOpen(bool);
         setModalItem(item)
     }
@@ -35,23 +34,28 @@ function SearchResultItem({ item, cb, modalCallback }) {
         : item.overview;
 
     return (
-        <Grid item xs={2} sm={3} md={4}>
+        <Grid item xs={4}>
             <Card raised={true} sx={{
-                bgcolor: 'text.disabled'
-
+                bgcolor: 'darkslategray',
+                minHeight: '370px',
             }}>
                 <CardMedia
-                    sx={{ height: 150 }}
+                    sx={{ height: 500 }}
                     image={`${CONSTANTS.TMDB_IMAGE_BASE_PATH}/w500/${item.poster_path}`} />
-                <CardContent sx={{ textAlign: 'left', color: 'text.primary' }}>
-                    <Typography>
-                        <strong>{item.original_title}</strong> <span>{item.release_date}</span>
+                <CardContent sx={{ textAlign: 'left', color: 'white' }}>
+                    <Typography variant="h5">
+                        <strong>{item.original_title}</strong>
+                    </Typography>
+                    <Typography sx={{ marginBottom: '10px' }}>
+                        <span>{item.release_date}</span>
                     </Typography>
                     <Typography paragraph={true}>
                         {trimmed}
                     </Typography>
-                    <Button color="primary" variant="contained" startIcon={<InfoOutlinedIcon />} onClick={() => showMovieDetails(item)}>More Info</Button>
-                    <Button color="secondary" variant="contained" startIcon={<AddCircleOutlineIcon />} className={isOwned ? `result__card--owned` : ''} onClick={() => toggleOwnership(item)}>I Own This</Button>
+                    <ButtonGroup sx={{ gap: 2 }}>
+                        <Button color="primary" variant="contained" startIcon={<InfoOutlinedIcon />} onClick={() => showMovieDetails(item)}>More Info</Button>
+                        <Button color="secondary" variant="contained" startIcon={<AddCircleOutlineIcon />} className={isOwned ? `result__card--owned` : ''} onClick={() => toggleOwnership(item)}>I Own This</Button>
+                    </ButtonGroup>
                 </CardContent>
             </Card>
         </Grid>

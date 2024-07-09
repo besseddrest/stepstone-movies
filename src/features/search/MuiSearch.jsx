@@ -17,12 +17,24 @@ export default function MuiSearch() {
     )
 
     return (
-        <Stack spacing={2}>
+        <Stack sx={{ width: '100%' }} spacing={2}>
             <TextField
                 id="movie-search"
                 type="search"
                 label="Search The Movie DB!"
+                fullWidth
                 onChange={handleChange}
+                sx={{
+                    input: {
+                        color: 'white',
+                        backgroundColor: '#414141'
+                    },
+                }}
+                InputLabelProps={{
+                    style: {
+                        color: 'white',
+                    }
+                }}
             />
             <MyMovies list={myMovieList} />
             <SearchResults list={movies} cb={updateMyMovies} />
