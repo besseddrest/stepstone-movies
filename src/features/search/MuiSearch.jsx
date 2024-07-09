@@ -1,19 +1,17 @@
-import { Stack } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import SearchResults from "./SearchResults";
-import Pagination from "@mui/material/Pagination";
 import { useState, useRef, useCallback } from "react";
+import { Stack, TextField, Pagination } from "@mui/material";
+import MyMovies from "./MyMovies";
+import SearchResults from "./SearchResults";
+import SearchStats from "./SearchStats";
 import { CONSTANTS } from "../../utils/constants";
 import { debounce } from "../../utils/debounce";
-import MyMovies from "./MyMovies";
 
 export default function MuiSearch() {
     const [movies, setMovies] = useState([]);
     const [myMovieList, setMyMovieList] = useState([]);
-    const [searchStats, setSearchStats] = useState(null);
+    const [searchStats, setSearchStats] = useState({ currentPage: 1, totalResults: 0, totalPages: 0 });
     const currentPage = useRef(1);
 
-    // console.log(movies);
     const debounceFetchMovies = useCallback(
         debounce(val => fetchMovies(val), 500), []
     )
@@ -31,7 +29,7 @@ export default function MuiSearch() {
             <Pagination
                 page={currentPage.current}
             />
-            <SearchStats data={searchStats} />
+            <SearchStats stats={searchStats} />
         </Stack>
     );
 
@@ -55,7 +53,7 @@ export default function MuiSearch() {
                             setSearchStats({
                                 currentPage: response.page,
                                 totalPages: response.total_pages,
-                                totalResults: response.total_results,
+                                totalResults: cleanList.length
                             });
                             setMovies(cleanList)
                         }

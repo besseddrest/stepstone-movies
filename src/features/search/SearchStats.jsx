@@ -1,5 +1,5 @@
-export default function SearchStats({ data }) {
+export default function SearchStats({ stats }) {
     return (
-        <p>STATS GO HERE</p>
+        <div>Showing {8} of {stats.totalResults} results</div>
     )
 }
