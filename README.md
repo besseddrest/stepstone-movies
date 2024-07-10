@@ -58,6 +58,14 @@ Terrance mentioned the role involves working closely w MUI. I've recent exp work
 
 I ran into a really odd issue trying to implement auth via header options in request + API read access token. Apparently this auth method was added recently, and I have an older tmdb account (I've played around with this API before). Long story short, my read access token would work for 1 maybe 2 requests, then the token would magically change, and I would be denied for not having a valid key. I'm still not quite sure if the age of my account was a factor, but I chose to move on and the `api_key` is just sent in the request uri, though I think the header auth is a much cleaner solution.
 
+__UPDATE:__ Got clarity on why I was experiencing auth issues - in deciding what
+method I wanted to use (back and forth btwn API key and Access Token
+auth), while I was testing calls using their API reference (right hand column), the code block they
+use to make this test request doesn't update correctly. Access token auth will
+use the Bearer token method, but when you switch to use API key, it only
+replaces the Bearer token in the header config, rather than replacing the entire
+example code block itself.
+
 **API v3**
 
 I think v4 is relatively new but requires the method above
@@ -85,4 +93,4 @@ following:
 - overall layout adjustments, specifically pre search and dynamic images
 - fallback images, in case not found on server
 - additional detail/metadata when viewing Movie Details in modal
-
+- making adjustments to template to ensure good responsive UX
